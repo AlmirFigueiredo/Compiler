@@ -1,9 +1,9 @@
 import re
-import pandas as pd
 
 TOKENS_DICT = {
     'NUM_INT': r'\d+',
     'NUM_DEC': r'\d+\.\d+',
+    'Logic_value': r'(true|false)',
     'Tipo': r'(int|float|double|char|boolean)',
     '[': r'\[',
     ']': r'\]',
