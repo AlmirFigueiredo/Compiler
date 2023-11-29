@@ -95,10 +95,14 @@ def declaracao_de_variavel(tokens):
                     i += 1
                     if i < final and tokens[i] == ';':
                         i += 1
-                        return True
+                        return i == final
                     while i < final and (tokens[i] == '-' or tokens[i] == '+' or tokens[i] == '/' or tokens[i] == '%'):
+                        i += 1
                         if i < final and atribuicao_declaracao_variavel_expressao(tokens):
                             i += 1
+                    if i < final and tokens[i] == ';':
+                        i += 1
+                        return i == final
     return False
 def check_grammar(tokens):
     global i
