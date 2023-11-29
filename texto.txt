@@ -1,2 +1,2 @@
-//Primeira linha
+int almir = 20;
 //Segunda linha
