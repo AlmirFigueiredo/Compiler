@@ -1,15 +1,11 @@
 from lexical_analyzer import TOKENS_DICT
 
 valid_tokens = TOKENS_DICT.keys()
-tokens = []
 i = 0
 final = 0
-def analyze(lexs_and_tokens):
+def analyze(tokens):
     global i
     global final
-    tokens = []
-    for token in lexs_and_tokens:
-        tokens.append(token[1])
     i = 0    
     final = len(tokens)
     return check_grammar(tokens)
