@@ -95,6 +95,8 @@ def atribuicao_declaracao_variavel_expressao_complexa(tokens):
         i += 1
         result = False
         while i < final and tokens[i] != ')':
+            if i < final and tokens[i] == '-':
+                i += 1
             if i < final and (tokens[i] == 'NUM_INT' or tokens[i] == 'NUM_DEC' or tokens[i] == 'ID'):
                 i += 1
                 if i < final and tokens[i] == ')':
@@ -112,6 +114,8 @@ def atribuicao_declaracao_variavel_expressao_complexa(tokens):
 def atribuicao_declaracao_variavel_expressao(tokens):  
     global i
     global final
+    if i < final and tokens[i] == '-':
+        i += 1
     if i < final and (tokens[i] == 'NUM_INT' or tokens[i] == 'NUM_DEC' or tokens[i] == 'ID'):
         if i+1 < final and(tokens[i+1] == '+' or tokens[i+1] == '-' or tokens[i+1] == '/' or tokens[i+1] == '*'):
             i += 2
@@ -123,6 +127,8 @@ def atribuicao_declaracao_variavel_expressao(tokens):
 def atribuicao_declaracao_variavel(tokens):
     global i
     global final
+    if i < final and tokens[i] == '-':
+        i += 1
     if i < final and (tokens[i] == 'NUM_INT' or tokens[i] == 'NUM_DEC' or tokens[i] == 'ID'):
         if i+1 < final and (tokens[i+1] == '+' or tokens[i+1] == '-' or tokens[i+1] == '/' or tokens[i+1] == '*' or tokens[i+1] == '%'):
             i += 2
@@ -144,6 +150,8 @@ def declaracao_de_variavel(tokens):
                 return i == final
             elif i < final and tokens[i] == '=':
                 i += 1
+                if tokens[i] == '-':
+                    i += 1
                 if i < final and atribuicao_declaracao_variavel(tokens):
                     i += 1
                     if i < final and tokens[i] == ';':
