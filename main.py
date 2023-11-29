@@ -6,7 +6,6 @@ if __name__ == '__main__':
         lines = text.split('\n')
         for i in range(0, len(lines)):
             lexs_and_tokens = convert_to_tokens(lines[i])
-            print(f'Linha {i+1}: ')
-            analyze(lexs_and_tokens)
+            print(f'Linha {i+1}: {analyze(lexs_and_tokens)}')
             
         

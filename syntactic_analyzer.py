@@ -9,32 +9,29 @@ def analyze(lexs_and_tokens):
     for token in lexs_and_tokens:
         tokens.append(token[1])
     final = len(tokens)
-    if check_grammar(tokens):
-        print('Tudo Ok')
-    else:
-        print('Erro de sintaxe!')
-# def atribuicao_declaracao_variavel_logica(tokens):
-#     global i
-#     global final
+    return check_grammar(tokens)
+ def atribuicao_declaracao_variavel_logica(tokens):
+     global i
+     global final
 
-# def declaracao_de_variavel_logica(tokens):
-#     global final
-#     global i
-#     if tokens[i] == 'Tipo':
-#         i += 1
-#         if i < final and tokens[i] == 'ID':
-#             i += 1
-#             if i < final and tokens[i] == ';':
-#                 i += 1
-#                 return True
-#             elif i < final and tokens[i] == '=':
-#                 i += 1
-#                 if i < final and atribuicao_declaracao_variavel_logica(tokens):
-#                     i += 1
-#                     if i < final and tokens[i] == ';':
-#                         i += 1
-#                         return True
-#     return False
+ def declaracao_de_variavel_logica(tokens):
+     global final
+     global i
+     if tokens[i] == 'Tipo':
+         i += 1
+         if i < final and tokens[i] == 'ID':
+             i += 1
+             if i < final and tokens[i] == ';':
+                 i += 1
+                 return True
+             elif i < final and tokens[i] == '=':
+                 i += 1
+                 if i < final and atribuicao_declaracao_variavel_logica(tokens):
+                     i += 1
+                     if i < final and tokens[i] == ';':
+                         i += 1
+                         return True
+     return False
 def atribuicao_declaracao_variavel_expressao_complexa(tokens):
     global i 
     global final
@@ -96,11 +93,13 @@ def declaracao_de_variavel(tokens):
                     if i < final and tokens[i] == ';':
                         i += 1
                         return i == final
+                    recursions_value = False
                     while i < final and (tokens[i] == '-' or tokens[i] == '+' or tokens[i] == '/' or tokens[i] == '%'):
                         i += 1
-                        if i < final and atribuicao_declaracao_variavel_expressao(tokens):
+                        if i < final:
+                            recursions_value = atribuicao_declaracao_variavel_expressao(tokens)
                             i += 1
-                    if i < final and tokens[i] == ';':
+                    if i < final and tokens[i] == ';' and recursions_value:
                         i += 1
                         return i == final
     return False
@@ -110,8 +109,8 @@ def check_grammar(tokens):
     while i < final:
         if(declaracao_de_variavel(tokens)):
             return True
-        # if(declaracao_de_variavel_logica(tokens)):
-        #     return True
+        if(declaracao_de_variavel_logica(tokens)):
+            return True
             
         i += 1
     return False
