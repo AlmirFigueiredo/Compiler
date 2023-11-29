@@ -17,6 +17,8 @@ def atribuicao_declaracao_variavel_expressao_logica_complexa(tokens):
         i += 1
         result = False
         while i < final and tokens[i] != ')':
+            if i < final and tokens[i] == '!':
+                i += 1
             if i < final and (tokens[i] == 'Logic_value'or tokens[i] == 'ID'):
                 i += 1
                 if i < final and tokens[i] == ')':
@@ -34,6 +36,8 @@ def atribuicao_declaracao_variavel_expressao_logica_complexa(tokens):
 def atribuicao_declaracao_variavel_expressao_logica(tokens):  
     global i
     global final
+    if i < final and tokens[i] == '!':
+        i += 1
     if i < final and (tokens[i] == 'Logic_value' or tokens[i] == 'ID'):
         if i+1 < final and(tokens[i+1] == '&&' or tokens[i+1] == '||'):
             i += 2
@@ -46,6 +50,8 @@ def atribuicao_declaracao_variavel_expressao_logica(tokens):
 def atribuicao_declaracao_variavel_logica(tokens):
     global i
     global final
+    if i < final and tokens[i] == '!':
+        i += 1
     if i < final and (tokens[i] == 'ID' or tokens[i] == 'Logic_value'):
         if i+1 < final and (tokens[i+1] == '||' or tokens[i+1] == '&&'):
             i += 2
