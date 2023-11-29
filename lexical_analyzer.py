@@ -74,7 +74,8 @@ def convert_to_lexs(line_text):
                 while i < final and line_text[i] != '"':
                     lexema += line_text[i]
                     i += 1
-                lexema += line_text[i]
+                if i < final:    
+                    lexema += line_text[i]
                 i += 1
             #Quando tem barra pode ser varias coisas
             elif line_text[i] == '/':

@@ -1,2 +1,1 @@
-int almir = 20;
-//Segunda linha
+int a = 20 + (30 + 20 - (40 + 20));
