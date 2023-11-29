@@ -9,7 +9,28 @@ def analyze(tokens):
     i = 0    
     final = len(tokens)
     return check_grammar(tokens)
-
+def declaracao_de_variavel_logica_relacional(tokens):
+    global i
+    global final
+    if i < final and tokens[i] == 'Tipo':
+        i += 1
+        if i < final and tokens[i] == 'ID':
+            i += 1
+            if i < final and tokens[i] == ';':
+                i += 1
+                return i == final
+            elif i < final and tokens[i] == '=':
+                i += 1
+                if i < final and atribuicao_declaracao_variavel_expressao(tokens):
+                    i += 1 
+                    if i < final and (tokens[i] == '>' or tokens[i] == '>=' or tokens[i] == '<' or tokens[i] == '<=' or tokens[i] == '!='or tokens[i] == '=='):
+                        i += 1
+                        if i < final and atribuicao_declaracao_variavel_expressao(tokens):
+                            i += 1
+                            if i < final and tokens[i] == ';':
+                                i += 1
+                                return i == final
+    return False
 def atribuicao_declaracao_variavel_expressao_logica_complexa(tokens):
     global i 
     global final
@@ -46,7 +67,6 @@ def atribuicao_declaracao_variavel_expressao_logica(tokens):
     elif i < final and tokens[i] == '(':
         return atribuicao_declaracao_variavel_expressao_logica_complexa(tokens)
     return False
-
 def atribuicao_declaracao_variavel_logica(tokens):
     global i
     global final
@@ -60,11 +80,10 @@ def atribuicao_declaracao_variavel_logica(tokens):
     elif i < final and tokens[i] == '(':
         return atribuicao_declaracao_variavel_expressao_logica(tokens)
     return False
-
 def declaracao_de_variavel_logica(tokens):
     global final
     global i
-    if tokens[i] == 'Tipo':
+    if i < final and tokens[i] == 'Tipo':
         i += 1
         if i < final and tokens[i] == 'ID':
             i += 1
@@ -137,7 +156,6 @@ def atribuicao_declaracao_variavel(tokens):
     elif i < final and tokens[i] == '(':
         return atribuicao_declaracao_variavel_expressao(tokens)
     return False
-
 def declaracao_de_variavel(tokens):
     global final
     global i
@@ -174,5 +192,8 @@ def check_grammar(tokens):
         return True
     i = 0
     if(declaracao_de_variavel_logica(tokens)):
+        return True
+    i = 0
+    if(declaracao_de_variavel_logica_relacional(tokens)):
         return True
     return False
