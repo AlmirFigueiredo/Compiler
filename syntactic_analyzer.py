@@ -38,8 +38,24 @@ def analyze(lexs_and_tokens):
 def atribuicao_declaracao_variavel_expressao_complexa(tokens):
     global i 
     global final
-    
-    
+    if i < final and tokens[i] == '(':
+        i += 1
+        result = False
+        while i < final and tokens[i] != ')':
+            if i < final and (tokens[i] == 'NUM_INT' or tokens[i] == 'NUM_DEC' or tokens[i] == 'ID'):
+                i += 1
+                if i < final and tokens[i] == ')':
+                    result = True
+                elif i < final and (tokens[i] == '+' or tokens[i] == '-' or tokens[i] == '/' or tokens[i] == '*'):
+                    i += 1
+                    result = False
+            elif i < final and tokens[i] == '(':
+                if atribuicao_declaracao_variavel_expressao_complexa(tokens):
+                    i += 1
+                    result = True
+            else:
+                break
+    return result or False
 def atribuicao_declaracao_variavel_expressao(tokens):  
     global i
     global final
@@ -72,7 +88,7 @@ def declaracao_de_variavel(tokens):
             i += 1
             if i < final and tokens[i] == ';':
                 i += 1
-                return True
+                return i == final
             elif i < final and tokens[i] == '=':
                 i += 1
                 if i < final and atribuicao_declaracao_variavel(tokens):
@@ -80,6 +96,9 @@ def declaracao_de_variavel(tokens):
                     if i < final and tokens[i] == ';':
                         i += 1
                         return True
+                    while i < final and (tokens[i] == '-' or tokens[i] == '+' or tokens[i] == '/' or tokens[i] == '%'):
+                        if i < final and atribuicao_declaracao_variavel_expressao(tokens):
+                            i += 1
     return False
 def check_grammar(tokens):
     global i
