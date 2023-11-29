@@ -9,6 +9,37 @@ def analyze(tokens):
     i = 0    
     final = len(tokens)
     return check_grammar(tokens)
+def declaracao_texto(tokens):
+    global final
+    global i
+    if tokens[i] == 'Tipo':
+        i += 1
+        if i < final and tokens[i] == 'ID':
+            i += 1
+            if i < final and tokens[i] == ';':
+                i += 1
+                return i == final
+            elif i < final and tokens[i] == '=':
+                i += 1
+                if i < final and tokens[i] == 'TEXTO':
+                    i += 1
+                    if i < final and tokens[i] == ';':
+                        i += 1
+                        return i == final
+                    else:
+                        loop_validation = False
+                        while i < final:
+                            if i < final and tokens[i] == ';':
+                                break
+                            if i < final and tokens[i] == '+':
+                                loop_validation = False
+                            elif i < final and tokens[i] == 'TEXTO':
+                                loop_validation = True
+                            i += 1
+                        if i < final and loop_validation and tokens[i] == ';':
+                            i += 1
+                            return i == final
+                        
 def declaracao_de_variavel_logica_relacional(tokens):
     global i
     global final
@@ -188,6 +219,9 @@ def declaracao_de_variavel(tokens):
 def check_grammar(tokens):
     global i
     global final
+    if(declaracao_texto(tokens)):
+        return True
+    i = 0
     if(declaracao_de_variavel(tokens)):
         return True
     i = 0
