@@ -1,4 +1,1 @@
-a = true !false;
-a = false && (! || false);
-a = true || !almir  junior;
-a = junior || true || (true & !false);
+int almir[] 
