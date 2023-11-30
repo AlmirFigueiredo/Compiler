@@ -16,3 +16,5 @@ int f = (false || true) && (false)) || true);
 int g = (almir || junior) && (true || true || false && true;
 int h = (junior || junior && (junior || junior && almir || junior || true && (false))))
 int i = (false && true)
+
+if(27-40+20 * (9 + 8) > 28 + (20 -30 + (40 - 80 + 60 - 80 + 40 - 80 + 20))) {

@@ -13,7 +13,6 @@ if __name__ == '__main__':
                 if tup[1] == 'COMMENT':
                     continue
                 tokens_per_line.append(tup[1])
-
             print(analyze(tokens_per_line))
     
         

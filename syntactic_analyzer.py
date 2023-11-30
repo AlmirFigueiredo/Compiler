@@ -3,12 +3,53 @@ from lexical_analyzer import TOKENS_DICT
 valid_tokens = TOKENS_DICT.keys()
 i = 0
 final = 0
+blocks = 0
 def analyze(tokens):
     global i
     global final
     i = 0    
     final = len(tokens)
     return check_grammar(tokens)
+
+def funcao_de_retorno_logico_e_texto(tokens):
+    global i
+    global final
+    if i < final and tokens[i] == 'return':
+        i += 1
+        if i < final and atribuicao_declaracao_variavel_logica(tokens):
+            i += 1
+            recursions_value = True
+            if i < final and (tokens[i] == '&&' or tokens[i] == '||'):
+                recursions_value = False
+                while i < final and (tokens[i] == '&&' or tokens[i] == '||'):
+                    i += 1
+                    if i < final:
+                        recursions_value = atribuicao_declaracao_variavel_expressao_logica(tokens)
+                        i += 1
+            if i < final and tokens[i] == ';' and recursions_value:
+                i += 1
+                return i == final
+    return False
+
+def funcao_de_retorno_aritmetico(tokens):
+    global i
+    global final
+    if i < final and tokens[i] == 'return':
+        i += 1
+        if i < final and atribuicao_declaracao_variavel(tokens):
+            i += 1
+            recursions_value = True
+            if i < final and(tokens[i] == '-' or tokens[i] == '+' or tokens[i] == '/' or tokens[i] == '%' or tokens[i] == '*'):
+                recursions_value = False
+                while i < final and (tokens[i] == '-' or tokens[i] == '+' or tokens[i] == '/' or tokens[i] == '%' or tokens[i] == '*'):
+                    i += 1
+                    if i < final:
+                        recursions_value = atribuicao_declaracao_variavel_expressao(tokens)
+                        i += 1
+            if i < final and tokens[i] == ';' and recursions_value:
+                i += 1
+                return i == final
+    return False
 
 def atribuicao_de_valor_array(tokens):
     global i
@@ -136,7 +177,8 @@ def declaracao_texto(tokens):
                             i += 1
                         if i < final and loop_validation and tokens[i] == ';':
                             i += 1
-                            return i == final                        
+                            return i == final
+                                                    
 def declaracao_de_variavel_logica_relacional(tokens):
     global i
     global final
@@ -336,5 +378,11 @@ def check_grammar(tokens):
         return True
     i = 0
     if(atribuicao_de_valor_array(tokens)):
+        return True
+    i = 0
+    if(funcao_de_retorno_aritmetico(tokens)):
+        return True
+    i = 0
+    if(funcao_de_retorno_logico_e_texto(tokens)):
         return True
     return False
