@@ -9,12 +9,35 @@ def analyze(tokens):
     i = 0    
     final = len(tokens)
     return check_grammar(tokens)
+
+def atribuicao_de_valor_logico(tokens):
+    global i
+    global final
+    if i < final and tokens[i] == 'ID':
+        i += 1
+        if i < final and (tokens[i] == '='):
+            i += 1
+            if i < final and atribuicao_declaracao_variavel_expressao_logica(tokens):
+                i += 1
+                if i < final and tokens[i] == ';':
+                    i += 1
+                    return i == final
+                recursions_value = False
+                while i < final and (tokens[i] == '&&' or tokens[i] == '||'):
+                    i += 1
+                    if i < final:
+                        recursions_value = atribuicao_declaracao_variavel_expressao_logica(tokens)
+                        i += 1
+                if i < final and tokens[i] == ';' and recursions_value:
+                    i += 1
+                    return i == final
+    return False
 def atribuicao_de_valor_aritmetico(tokens):
     global final
     global i
     if i < final and tokens[i] == 'ID':
         i += 1
-        if i < final and (tokens[i] == '=' or tokens[i] == '+=' or tokens[i] == '-=' or tokens[i] == '/=' or tokens[i] == '*=' or tokens[i] == '%='):
+        if i < final and (tokens[i] == '=' or tokens[i] == '+=' or tokens[i] == '-=' or tokens[i] == '/=' or tokens[i] == '*=' or tokens[i] == '%=' or tokens[i] == '&&=' or tokens[i] == '||='):
             i += 1
             if i < final and atribuicao_declaracao_variavel_expressao(tokens):
                 i += 1
@@ -252,5 +275,8 @@ def check_grammar(tokens):
         return True
     i = 0
     if(atribuicao_de_valor_aritmetico(tokens)):
+        return True
+    i = 0
+    if(atribuicao_de_valor_logico(tokens)):
         return True
     return False
