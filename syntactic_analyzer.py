@@ -11,6 +11,37 @@ def analyze(tokens):
     final = len(tokens)
     return check_grammar(tokens)
 
+def condicional_basica(tokens):
+    global i
+    global final
+    if i < final and (tokens[i] == 'if' or tokens[i] == 'while'):
+        i += 1
+        if i < final and tokens[i] == '(':
+            i += 1
+            if i < final and atribuicao_declaracao_variavel_logica(tokens):
+                i += 1
+                recursions_value = True
+                if i < final and (tokens[i] == '&&' or tokens[i] == '||'):
+                    recursions_value = False
+                    while i < final and (tokens[i] == '&&' or tokens[i] == '||'):
+                        i += 1
+                        if i < final:
+                            recursions_value = atribuicao_declaracao_variavel_expressao_logica(tokens)
+                            i += 1
+                if i < final and tokens[i] == ')' and recursions_value:
+                    i += 1
+                    if i == final:
+                        return True
+                    elif i < final and tokens[i] == '{':
+                        blocks += 1
+                        i += 1
+                        if i == final:
+                            return True
+                        elif i < final and tokens[i] == '}':
+                            blocks -= 1
+                            i += 1
+                            return i == final
+
 def funcao_de_retorno_logico_e_texto(tokens):
     global i
     global final
@@ -30,7 +61,6 @@ def funcao_de_retorno_logico_e_texto(tokens):
                 i += 1
                 return i == final
     return False
-
 def funcao_de_retorno_aritmetico(tokens):
     global i
     global final
@@ -124,6 +154,21 @@ def atribuicao_de_valor_logico(tokens):
                 if i < final and tokens[i] == ';' and recursions_value:
                     i += 1
                     return i == final
+            elif i < final and atribuicao_declaracao_variavel_expressao(tokens):
+                i += 1
+                if i < final and tokens[i] == ';':
+                    i += 1
+                    return i == final
+                while i < final and (tokens[i] == '-' or tokens[i] == '+' or tokens[i] == '/' or tokens[i] == '%' or tokens[i] == '*'):
+                    i += 1
+                    if i < final:
+                        recursions_value = atribuicao_declaracao_variavel_expressao(tokens)
+                        i += 1
+                if i < final and tokens[i] == ';' and recursions_value:
+                    i += 1
+                    return i == final
+
+
     return False
 def atribuicao_de_valor_aritmetico(tokens):
     global final
@@ -201,6 +246,26 @@ def declaracao_de_variavel_logica_relacional(tokens):
                                 i += 1
                                 return i == final
     return False
+def expressao_logica_composta(tokens):
+    global i 
+    global final
+    if i < final and (tokens[i] == '||' or tokens[i] == '&&'):
+        i += 1
+        if i < final and tokens[i] == '!':
+            i += 1
+
+        if i < final and atribuicao_declaracao_variavel_expressao(tokens):
+            i += 1
+            if i < final and (tokens[i] == '>' or tokens[i] == '>=' or tokens[i] == '<' or tokens[i] == '<=' or tokens[i] == '!='or tokens[i] == '=='):
+                i += 1
+                if i < final and atribuicao_declaracao_variavel_expressao(tokens):
+                    i += 1
+                    return True
+        elif i < final and atribuicao_declaracao_variavel_expressao_logica(tokens):
+            i += 1
+            return True
+
+
 def atribuicao_declaracao_variavel_expressao_logica_complexa(tokens):
     global i 
     global final
@@ -236,7 +301,8 @@ def atribuicao_declaracao_variavel_expressao_logica(tokens):
         return True
     elif i < final and tokens[i] == '(':
         return atribuicao_declaracao_variavel_expressao_logica_complexa(tokens)
-    return False
+    return False    
+
 def atribuicao_declaracao_variavel_logica(tokens):
     global i
     global final
@@ -384,5 +450,7 @@ def check_grammar(tokens):
         return True
     i = 0
     if(funcao_de_retorno_logico_e_texto(tokens)):
+        return True
+    if(condicional_basica(tokens)):
         return True
     return False

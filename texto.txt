@@ -1,1 +1,1 @@
-return true || a == b;
+boolean value = a > b || a < b;
