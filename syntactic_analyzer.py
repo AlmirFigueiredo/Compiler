@@ -11,14 +11,56 @@ def analyze(tokens):
     final = len(tokens)
     return check_grammar(tokens)
 
+def atribuicao_de_valores_declaracao_array(tokens):
+    global i, final
+    if i < final and tokens[i] != '{':
+        return False
+    i += 1
+    while i < final:
+        if tokens[i] == 'ID' or tokens[i] == 'NUM_INT' or tokens[i] == 'NUM_DECIMAL' or tokens[i] == 'Logic_value' or atribuicao_de_valor_aritmetico(tokens) or atribuicao_de_valor_logico(tokens) or atribuicao_valor_logico_relacional(tokens):
+            i += 1
+            if i < final and tokens[i] == '}':
+                return True
+            elif i < final and tokens[i] == ',':
+                i += 1
+                continue
+            else:
+                return False
+        else:
+            return False
+    return False
+def inicializacao_array(tokens):
+    global i, final
+    if i < final and tokens[i] == 'Tipo':
+        i += 1
+        if i < final and tokens[i] == 'ID':
+            i += 1
+            if i < final and tokens[i] == '[':
+                i += 1        
+                if i < final and tokens[i] == ']':
+                    i += 1
+                    if i < final and tokens[i] == '=':
+                        i += 1
+                        if i < final and atribuicao_de_valores_declaracao_array(tokens):
+                            i += 1
+                            if i < final and tokens[i] == ';':
+                                i += 1
+                                return i == final
+
+    return False
+    
 def condicional_basica(tokens):
     global i
     global final
+    global blocks
     if i < final and (tokens[i] == 'if' or tokens[i] == 'while'):
         i += 1
         if i < final and tokens[i] == '(':
             i += 1
-            if i < final and atribuicao_declaracao_variavel_logica(tokens):
+            relacional = False
+            if i+1 < final:
+                relacional = tokens[i+1] == '>' or tokens[i+1] == '>=' or tokens[i+1] == '<' or tokens[i+1] == '<=' or tokens[i+1] == '!='or tokens[i+1] == '=='
+            if i < final and atribuicao_declaracao_variavel_logica(tokens) and not relacional:
                 i += 1
                 recursions_value = True
                 if i < final and (tokens[i] == '&&' or tokens[i] == '||'):
@@ -28,6 +70,13 @@ def condicional_basica(tokens):
                         if i < final:
                             recursions_value = atribuicao_declaracao_variavel_expressao_logica(tokens)
                             i += 1
+            elif i < final and atribuicao_valor_logico_relacional(tokens) and relacional:
+                recursions_value = True
+                while i < final and (tokens[i] == '&&' or tokens[i] == '||'):
+                    i += 1
+                    if i < final:
+                        recursions_value = atribuicao_declaracao_variavel_expressao_logica(tokens)
+                        i += 1
                 if i < final and tokens[i] == ')' and recursions_value:
                     i += 1
                     if i == final:
@@ -242,9 +291,22 @@ def declaracao_de_variavel_logica_relacional(tokens):
                         i += 1
                         if i < final and atribuicao_declaracao_variavel_expressao(tokens):
                             i += 1
+                            if i < final and (tokens[i] == '||' or tokens[i] == '&&'):
+                                i += 1
+                                return atribuicao_valor_logico_relacional(tokens)
                             if i < final and tokens[i] == ';':
                                 i += 1
                                 return i == final
+    return False
+def atribuicao_valor_logico_relacional(tokens):
+    global final, i
+    if i < final and atribuicao_declaracao_variavel_expressao(tokens):
+        i += 1 
+        if i < final and (tokens[i] == '>' or tokens[i] == '>=' or tokens[i] == '<' or tokens[i] == '<=' or tokens[i] == '!='or tokens[i] == '=='):
+            i += 1
+            if i < final and atribuicao_declaracao_variavel_expressao(tokens):
+                i += 1                   
+                return True
     return False
 def expressao_logica_composta(tokens):
     global i 
@@ -451,6 +513,11 @@ def check_grammar(tokens):
     i = 0
     if(funcao_de_retorno_logico_e_texto(tokens)):
         return True
+    i = 0 
     if(condicional_basica(tokens)):
         return True
+    i = 0
+    if(inicializacao_array(tokens)):
+        return True
+
     return False
