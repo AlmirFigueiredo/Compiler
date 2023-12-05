@@ -5,6 +5,7 @@ i = 0
 final = 0
 blocks = 0
 k = 0
+is_struct = False
 def analyze(tokens):
     global i,final, k
     i = 0    
@@ -13,6 +14,7 @@ def analyze(tokens):
     if valid:
         return True
     else:
+        k = min(k, final-1)
         print(f'Erro de sintaxe encontrado próximo ao token: {tokens[k]}')
         result = ""
         for j in range(0, final):
@@ -25,6 +27,60 @@ def analyze(tokens):
             result += tokens[j]
             result += " "
         print(result)
+def struct_parametros(tokens):
+    global i, final, blocks
+    correct = True
+    if i < final and (tokens[i] == 'NUM_INT' or tokens[i] == 'NUM_DEC'):
+        i += 1
+        if i < final and tokens[i] == ',':
+            i += 1
+            correct = False
+            return struct_parametros(tokens)
+        elif i < final and tokens[i] == '}' and correct:
+            return True
+    return i < final and tokens[i] == '}' and correct
+def struct_atrib(tokens):
+    global i, final, blocks
+    if i < final and tokens[i] == 'struct':
+        i += 1
+        if i < final and tokens[i] == 'ID':
+            i += 1
+            if i < final and tokens[i] == 'ID':
+                i += 1
+                if i < final and tokens[i] == '=':
+                    i += 1
+                    if i < final and tokens[i] == '{':
+                        blocks += 1
+                        i += 1
+                        if i < final and struct_parametros(tokens):
+                            blocks -= 1
+                            i += 1
+                            if i < final and tokens[i] == ';':
+                                i += 1
+                                return i == final
+    return False
+def struct_cons(tokens):
+    global i, final, blocks, is_struct
+    if i < final and tokens[i] == 'struct':
+        i += 1
+        if i < final and tokens[i] == 'ID':
+            i += 1
+            if i < final and tokens[i] == '{':
+                i += 1
+                is_struct = True
+                blocks += 1
+                return i == final
+    elif i < final and is_struct:
+        if declaracao_de_variavel(tokens):
+            return i == final
+        elif i < final and tokens[i] == '}':
+            i += 1
+            blocks -= 1
+            if i < final and tokens[i] == ';':
+                i += 1
+                is_struct = False
+                return i == final
+    return False
 def controle_funcao(tokens):
     global i, final
     if i < final and (tokens[i] == 'break' or tokens[i] == 'continue'):
@@ -239,6 +295,7 @@ def atribuicao_de_valores_declaracao_array(tokens):
         if tokens[i] == 'ID' or tokens[i] == 'NUM_INT' or tokens[i] == 'NUM_DECIMAL' or tokens[i] == 'Logic_value' or atribuicao_de_valor_aritmetico(tokens) or atribuicao_de_valor_logico(tokens) or atribuicao_valor_logico_relacional(tokens):
             i += 1
             if i < final and tokens[i] == '}':
+                blocks -= 1
                 return True
             elif i < final and tokens[i] == ',':
                 i += 1
@@ -309,7 +366,22 @@ def condicional_basica(tokens):
                             blocks -= 1
                             i += 1
                             return i == final
-
+    if i < final and tokens[i] == 'else':
+        i += 1
+        if i < final and tokens[i] == '{':
+            blocks += 1
+            i += 1
+            return i == final
+    elif i < final and tokens[i] == '}':
+        blocks -= 1
+        i += 1
+        if i < final and tokens[i] == 'else':
+            i += 1
+            if i < final and tokens[i] == '{':
+                blocks += 1
+                i += 1
+                return i == final
+    return False
 def funcao_de_retorno_logico_e_texto(tokens):
     global i
     global final
@@ -704,15 +776,22 @@ def declaracao_de_variavel(tokens):
     return False
 def check_grammar(tokens):
     global i, final, blocks, k
+    if(struct_cons(tokens)):
+        return True
+    i = 0
+    k = max(k, i-1)
+    if(struct_atrib(tokens)):
+        return True
+    i = 0
+    k = max(k, i-1)
+    if is_struct:
+        return False
     if i == final and len(tokens) == 0:
         return True
-    if i < final and tokens[i] == '}':
+    if final == 1 and tokens[i] == '}':
         i += 1
         blocks -= 1
-        if blocks < 0:
-            return False
-        else:
-            return i == final
+        return True
     if(declaracao_texto(tokens)):
         return True
     k = max(k, i-1)
@@ -776,4 +855,5 @@ def check_grammar(tokens):
     if(controle_funcao(tokens)):
         return True
     k = max(k, i-1)
+    i = 0
     return False

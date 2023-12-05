@@ -37,3 +37,37 @@ float calcularMedia(float a, float b) {
  // Este é um comentário de linha
 int multiplicar(int x, int y) {
 return x * y;
+
+
+
+
+// Declaração de variável
+int contador;
+
+// Declaração de função com parâmetros e bloco
+double calcularMedia(int numero1, float numero2) {
+    double media;
+    media = (numero1 + numero2) / 2;
+    return media;
+}
+// Estrutura de controle com expressão lógica
+if (contador > 10) {
+    contador = 0;
+} else {
+    contador += 1
+}
+
+// Uso de expressão aritmética
+int resultado;
+resultado;
+resultado = 5 * (3 + 2);
+
+// Declaração de  uma Estrutura
+struct Ponto {
+    int x;
+    int y;
+};
+
+// Comentário de uma linha
+// Inicialização de uma estrutura
+struct Ponto ponto1 = {10, 20};

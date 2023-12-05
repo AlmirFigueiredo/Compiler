@@ -25,13 +25,7 @@ if __name__ == '__main__':
             print("=================================================")
 
         from syntactic_analyzer import blocks
-        if blocks != 0:
+        if blocks != 0 and result:
             print("Erro de abertura/fechamento de bloco encontrado!")
         if result and blocks == 0:
             print("Nenhum erro de sintaxe encontrado!!")
-
-    
-
-
-            
-        
