@@ -7,14 +7,17 @@ if __name__ == '__main__':
         for line in lines:
             tokens_per_line = []    
             if len(line) == 0:
+                
                 continue
             line_tokens = convert_to_tokens(line)
             for tup in line_tokens:
                 if tup[1] == 'COMMENT':
                     continue
+                    
                 tokens_per_line.append(tup[1])
             print(analyze(tokens_per_line))
     
-        
+
+
             
         

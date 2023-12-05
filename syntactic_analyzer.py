@@ -11,10 +11,205 @@ def analyze(tokens):
     final = len(tokens)
     return check_grammar(tokens)
 
-def atribuicao_de_valores_declaracao_array(tokens):
+def atribuicao_de_valor_aritmetico_for(tokens):
+    global final
+    global i
+    if i < final and tokens[i] == 'ID':
+        i += 1
+        if i < final and (tokens[i] == '=' or tokens[i] == '+=' or tokens[i] == '-=' or tokens[i] == '/=' or tokens[i] == '*=' or tokens[i] == '%=' or tokens[i] == '&&=' or tokens[i] == '||='):
+            i += 1
+            if i < final and atribuicao_declaracao_variavel_expressao(tokens):
+                i += 1
+                if i < final and tokens[i] == ';':
+                    i += 1
+                    return True
+                recursions_value = False
+                while i < final and (tokens[i] == '-' or tokens[i] == '+' or tokens[i] == '/' or tokens[i] == '%' or tokens[i] == '*'):
+                    i += 1
+                    if i < final:
+                        recursions_value = atribuicao_declaracao_variavel_expressao(tokens)
+                        i += 1
+                if i < final and tokens[i] == ';' and recursions_value:
+                    i += 1
+                    return True
+    return False
+def incremento_for(tokens):
+    global final
+    global i
+    if i < final and tokens[i] == 'ID':
+        i += 1
+        if i < final and (tokens[i] == '=' or tokens[i] == '+=' or tokens[i] == '-=' or tokens[i] == '/=' or tokens[i] == '*=' or tokens[i] == '%=' or tokens[i] == '&&=' or tokens[i] == '||='):
+            i += 1
+            if i < final and atribuicao_declaracao_variavel_expressao(tokens):
+                i += 1
+                if i < final and tokens[i] == ')':
+                    return True
+                recursions_value = False
+                while i < final and (tokens[i] == '-' or tokens[i] == '+' or tokens[i] == '/' or tokens[i] == '%' or tokens[i] == '*'):
+                    i += 1
+                    if i < final:
+                        recursions_value = atribuicao_declaracao_variavel_expressao(tokens)
+                        i += 1
+                if i < final and tokens[i] == ')' and recursions_value:
+                    return True
+    return False
+def declaracao_de_variavel_for(tokens):
+    global final, i
+    if i < final and tokens[i] == 'Tipo':
+        i += 1
+        if i < final and tokens[i] == 'ID':
+            i += 1
+            if i < final and tokens[i] == ';':
+                i += 1
+                return True
+            elif i < final and tokens[i] == '=':
+                i += 1
+                if i < final and atribuicao_declaracao_variavel(tokens):
+                    i += 1
+                    if i < final and tokens[i] == ';':
+                        i += 1
+                        return True
+                    recursions_value = False
+                    while i < final and (tokens[i] == '-' or tokens[i] == '+' or tokens[i] == '/' or tokens[i] == '%' or tokens[i] == '*'):
+                        i += 1
+                        if i < final:
+                            recursions_value = atribuicao_declaracao_variavel_expressao(tokens)
+                            i += 1
+                    if i < final and tokens[i] == ';' and recursions_value:
+                        i += 1
+                        return True
+    return False
+def postfix_for(tokens):
     global i, final
+    if i < final and tokens[i] == 'ID':
+        i += 1
+        if i < final and (tokens[i] == '++' or tokens[i] == '--'):
+            i += 1
+            return True
+    elif i < final and (tokens[i] == '--' or tokens[i] == '++'):
+        i += 1
+        if i < final and tokens[i] == 'ID':
+            i += 1
+            return True
+    return False
+
+def funcao_for(tokens):
+    global i, final, blocks
+    if i < final and tokens[i] == 'for':
+        i += 1
+        if i < final and tokens[i] == '(':
+            i += 1
+            if tokens[i] == 'Tipo':
+                if i < final and declaracao_de_variavel_for(tokens):
+                    if i < final and atribuicao_valor_logico_relacional(tokens):
+                                        if i < final and tokens[i] == ';':
+                                            i += 1
+                                            if i+1 < final and (tokens[i+1] == '++' or tokens[i+1] == '--'):
+                                                if i < final and postfix_for(tokens):
+                                                    if i < final and tokens[i] == ')':
+                                                        i += 1
+                                                        if i < final and tokens[i] == '{':
+                                                            blocks += 1
+                                                            i += 1
+                                                            if i < final and tokens[i] == '}':
+                                                                blocks -= 1
+                                                                i += 1
+                                                                return i == final
+                                                            return i == final
+                                            else:
+                                                if i < final and incremento_for(tokens):
+                                                    if i < final and tokens[i] == ')':
+                                                        i += 1
+                                                        if i < final and tokens[i] == '{':
+                                                            blocks += 1
+                                                            i += 1
+                                                            if i < final and tokens[i] == '}':
+                                                                blocks -= 1
+                                                                i += 1
+                                                                return i == final
+                                                            return i == final                   
+            elif i < final and atribuicao_de_valor_aritmetico_for(tokens):
+                if i < final and atribuicao_valor_logico_relacional(tokens):
+                    if i < final and tokens[i] == ';':
+                        i += 1
+                        if i+1 < final and (tokens[i+1] == '++' or tokens[i+1] == '--'):
+                            if i < final and postfix_for(tokens):
+                                if i < final and tokens[i] == ')':
+                                    i += 1
+                                    if i < final and tokens[i] == '{':
+                                        blocks += 1
+                                        i += 1
+                                        if i < final and tokens[i] == '}':
+                                            blocks -= 1
+                                            i += 1
+                                            return i == final
+                                        return i == final
+                        else:
+                            if i < final and incremento_for(tokens):
+                                if i < final and tokens[i] == ')':
+                                    i += 1
+                                    if i < final and tokens[i] == '{':
+                                        blocks += 1
+                                        i += 1
+                                        if i < final and tokens[i] == '}':
+                                            blocks -= 1
+                                            i += 1
+                                            return i == final
+                                        return i == final
+    return False
+def funcao_print(tokens):
+    global i, final
+    if i < final and tokens[i] == 'println':
+        i += 1
+        if i < final and tokens[i] == '(':
+            i += 1
+            if i < final and tokens[i] == 'TEXTO':
+                i += 1
+                if i < final and tokens[i] == ')':
+                    i += 1
+                    if i < final and tokens[i] == ';':
+                        i += 1
+                        return i == final
+    return False
+
+def atribuicao_de_parametros_funcao(tokens):
+    global i, final
+    if i < final and tokens[i] != '(':
+        return False
+    i += 1
+    if i < final and tokens[i] == ')':
+        return True
+    while i < final:
+        if tokens[i] == 'Tipo':
+            i += 1
+            if i < final and tokens[i] == 'ID':
+                i += 1
+                if i < final and tokens[i] == ')':
+                    return True
+                elif i < final and tokens[i] == ',':
+                    i += 1
+                    continue
+                else:
+                    return False
+    return False
+def funcao(tokens):
+    global i, final, blocks
+    if i < final and tokens[i] == 'Tipo':
+        i += 1
+        if i < final and (tokens[i] == 'main' or tokens[i] == 'ID'):
+            i += 1
+            if i < final and atribuicao_de_parametros_funcao(tokens):
+                i += 1
+                if i < final and tokens[i] == '{':
+                    i += 1
+                    blocks += 1
+                    return i == final
+    return False        
+def atribuicao_de_valores_declaracao_array(tokens):
+    global i, final, blocks
     if i < final and tokens[i] != '{':
         return False
+    blocks += 1
     i += 1
     while i < final:
         if tokens[i] == 'ID' or tokens[i] == 'NUM_INT' or tokens[i] == 'NUM_DECIMAL' or tokens[i] == 'Logic_value' or atribuicao_de_valor_aritmetico(tokens) or atribuicao_de_valor_logico(tokens) or atribuicao_valor_logico_relacional(tokens):
@@ -482,8 +677,16 @@ def declaracao_de_variavel(tokens):
                         return i == final
     return False
 def check_grammar(tokens):
-    global i
-    global final
+    global i, final, blocks
+    if i == final and len(tokens) == 0:
+        return True
+    if i < final and tokens[i] == '}':
+        i += 1
+        blocks -= 1
+        if blocks < 0:
+            return False
+        else:
+            return i == final
     if(declaracao_texto(tokens)):
         return True
     i = 0
@@ -518,6 +721,15 @@ def check_grammar(tokens):
         return True
     i = 0
     if(inicializacao_array(tokens)):
+        return True
+    i = 0
+    if(funcao(tokens)):
+        return True
+    i = 0
+    if(funcao_print(tokens)):
+        return True
+    i = 0
+    if(funcao_for(tokens)):
         return True
 
     return False

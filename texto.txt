@@ -1,1 +1,2 @@
-int numeros[] = {20, 30, 40, true};
+for(int i = 0; i < 20; i += 1) {
+}
